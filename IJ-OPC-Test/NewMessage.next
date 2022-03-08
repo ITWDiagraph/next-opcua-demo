@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<ProductObject Name="Derby Relax 125ml" HorizontalSpacing="200" GapBetweenPrint="1.000" TaskType="HighResTask" DPI="200">
+	<Margin />
+	<Box Width="10.000" Length="35.460" Height="18.000" />
+	<Variables />
+	<Panel Name="Front">
+		<Head UID="0" Name="PrintHead1" Type="384" Offset="1.000" Enabled="True" DPI="200">
+			<FieldObject xsi:type="TextFieldObject" X="3.900" Y="1.500" LockAspectRatio="True" Data="EXP:03/2022" Family="Arial" Style="Regular" Width="30" Height="30" />
+			<FieldObject xsi:type="TextFieldObject" X="3.840" Y="1.016" LockAspectRatio="True" Data="Lot:DMR0120" Family="Arial" Style="Regular" Width="30" Height="30" />
+			<FieldObject xsi:type="TextFieldObject" X="4.020" Y="0.562" LockAspectRatio="True" Data="1x125 ml" Family="Arial" Style="Bold" Width="30" Height="30" />
+			<FieldObject xsi:type="TextFieldObject" X="3.630" Y="0.109" LockAspectRatio="True" Data="24 × Relax AC" Family="Arial" Style="Bold" Width="30" Height="30" />
+		</Head>
+		<Head UID="1" Name="PrintHead2" Type="384" Offset="1.000" Enabled="True" DPI="200" />
+	</Panel>
+	<Panel Name="Right" />
+	<Panel Name="Back" />
+	<Panel Name="Left" />
+	<Panel Name="Top" />
+	<Panel Name="Bottom" />
+</ProductObject>
