@@ -105,12 +105,13 @@ public class Program
                     if (response?.Results != null && serviceResult.HasValue && StatusCode.IsGood(serviceResult.Value))
                         if (serviceResult.Value != StatusCodes.GoodPostActionFailed)
                             if (response.Results.Length > 0 && response.Results[0]!.OutputArguments!.Length > 0)
-                            {
-                                var outputArgument = response.Results[0]!.OutputArguments[1];
-                               var output = outputArgument.Value;
-                               for (var i = 0; i < (outputArgument).ArrayDimensions[0]; i++)
-                                   ConsoleOut(((string[])output)[i]);
-                            }         
+                                if (response.Results[0]!.OutputArguments.Length > 1)
+                                {
+                                    var outputArgument = response.Results[0]!.OutputArguments[1];
+                                    var output = outputArgument.Value;
+                                    for (var i = 0; i < outputArgument.ArrayDimensions[0]; i++)
+                                        ConsoleOut(((string[])output)[i]);
+                                }
                 }
                 else
                 {
