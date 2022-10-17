@@ -23,9 +23,25 @@ public class Program
             {
                 if (string.IsNullOrEmpty(commandLine.IP))
                 {
-                    Console.WriteLine("Enter ip of the IJ printer (" + ip + ")");
+                    Console.WriteLine("Press enter to search IJ printers or enter the printers IP (i.e. " + ip + ")");
                     var enteredIP = Console.ReadLine();
-                    if (IsValidateIP(enteredIP)) ip = enteredIP;
+
+                    if (enteredIP == "")
+                    {
+                        var printers = new SearchPrinters().Search(new[] {SearchPrinters.PrinterType.LCIJTask1});
+                        foreach (var printerIP in printers.Result.Select(printer => printer.Split(' ')[0]))
+                        {
+                            Console.WriteLine($"use printer {printerIP} (y/n) ?");
+                            var yesNO = Console.ReadLine();
+                            if (yesNO.ToLower().Trim() != "y") continue;
+                            ip = printerIP;
+                            break;
+                        }
+                    }
+                    else if (IsValidateIP(enteredIP))
+                    {
+                        ip = enteredIP;
+                    }
                 }
                 else
                 {
@@ -110,7 +126,7 @@ public class Program
                                     var outputArgument = response.Results[0]!.OutputArguments[1];
                                     var output = outputArgument.Value;
                                     for (var i = 0; i < outputArgument.ArrayDimensions[0]; i++)
-                                        ConsoleOut(((string[])output)[i]);
+                                        ConsoleOut(((string[]) output)[i]);
                                 }
                 }
                 else
@@ -118,7 +134,7 @@ public class Program
                     ConsoleOut("press enter to read the status information", false, true);
 
                     //Read Status
-                    var response = await MakeOpcuaCall(channel, "GetStatusInformation", new[] { new Variant(1) });
+                    var response = await MakeOpcuaCall(channel, "GetStatusInformation", new[] {new Variant(1)});
                     var serviceResult = response?.ResponseHeader?.ServiceResult;
 
                     if (response?.Results != null && serviceResult.HasValue && StatusCode.IsGood(serviceResult.Value))
@@ -146,7 +162,7 @@ public class Program
 
                     //Stop Task1 
                     ConsoleOut("press enter to send 'StopPrinting' to printers task1 at " + ip, false, true);
-                    await MakeOpcuaCall(channel, "StopPrinting", new[] { new Variant(1) });
+                    await MakeOpcuaCall(channel, "StopPrinting", new[] {new Variant(1)});
                     ConsoleOut("StopPrinting executed", true);
 
 
@@ -154,12 +170,12 @@ public class Program
                     ConsoleOut("press enter to send 'StoreMessage' to printer " + ip, false, true);
                     var fi = new FileInfo(AppDomain.CurrentDomain.BaseDirectory + @"\NewMessage.next");
                     await MakeOpcuaCall(channel, "StoreMessage",
-                        new[] { new Variant(fi.Name), new Variant(File.ReadAllText(fi.FullName)) });
+                        new[] {new Variant(fi.Name), new Variant(File.ReadAllText(fi.FullName))});
                     ConsoleOut("Message sent to printer " + ip, true);
 
                     //Print
                     ConsoleOut("press enter to print message " + fi.Name, false, true);
-                    await MakeOpcuaCall(channel, "PrintPrd", new[] { new Variant(fi.Name) });
+                    await MakeOpcuaCall(channel, "PrintPrd", new[] {new Variant(fi.Name)});
                 }
             }
 
@@ -199,7 +215,7 @@ public class Program
                 InputArguments = inputParams
             };
 
-            var callRequest = new CallRequest { MethodsToCall = new[] { request } };
+            var callRequest = new CallRequest {MethodsToCall = new[] {request}};
 
             try
             {
