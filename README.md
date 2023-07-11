@@ -56,6 +56,12 @@ If the `-o` parameter is provided, the application will make a custom OPC UA cal
 * StopPrinting (int)Task number
 * StoreMessage (string)The message name (string)The message to store
 
+## Using with Nicelabel
+The project contains a solution for Nicelabel (Resmark.nsln) that uses IJ-OPC.exe. You can run OPC functions on the printer with a vbscript from Nicelabel like this:
+Set objShell = CreateObject("WScript.Shell")
+objShell.Run [path] & "\IJ-OPC.exe --ip=" & [IP] & " --opc=""ResumePrinting 1"" --out=" & [path] & "\out.txt", 0, True
+
+
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
