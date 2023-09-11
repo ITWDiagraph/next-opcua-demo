@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{E92D325F-04D9-410B-9658-BA4FEC376190}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>IJ_OPC_Test</RootNamespace>
-    <AssemblyName>IJ-OPC-Test</AssemblyName>
+    <RootNamespace>IJ_OPC</RootNamespace>
+    <AssemblyName>IJ-OPC</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -128,7 +128,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
-    <None Include="Resmark.nsln" />
+    <None Include="Resmark.nsln">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

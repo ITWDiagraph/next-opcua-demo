@@ -18,9 +18,16 @@ public class Program
         //read commandline arguments
         var ip = "10.1.2.3";
         var opcCommand = "";
+        var outfile="";
         Parser.Default.ParseArguments<Options>(args)
             .WithParsed(commandLine =>
             {
+
+                if (!string.IsNullOrEmpty(commandLine.Out))
+                {
+                    outfile = commandLine.Out;
+                }
+
                 if (string.IsNullOrEmpty(commandLine.IP))
                 {
                     Console.WriteLine("Press enter to search IJ printers or enter the printers IP (i.e. " + ip + ")");
@@ -53,9 +60,14 @@ public class Program
                     ConsoleOut("CompareFile (string)FileName (string)md5Hash");
                     ConsoleOut("EnableLocalNotification (bool)Enable (int)Port");
                     ConsoleOut("GetConfiguration");
+                    ConsoleOut("GetDateTime");
                     ConsoleOut("GetDiagnostics (int)Task number");
                     ConsoleOut("GetFileByName (string)FileName");
+                    ConsoleOut("GetMessageVariableData (int)Task number");
+                    ConsoleOut("GetPrimaryIdentifier");
                     ConsoleOut("GetPrinterConfiguration (int)Task number");
+                    ConsoleOut("GetPrintheadConsumeables");
+                    ConsoleOut("GetProductDetectStatus");
                     ConsoleOut("GetStatusInformation (int)Task number");
                     ConsoleOut("GetStoredMessageList");
                     ConsoleOut("PrintPrd (string)PRD xml (int)Task number");
@@ -66,9 +78,10 @@ public class Program
                     ConsoleOut("ResumePrinting (int)Task number");
                     ConsoleOut("SendFile (string)FileName (string)File");
                     ConsoleOut("SetConfiguration (string)Configuration");
+                    ConsoleOut("SetMessageVariableData (int)Task number (string)variableData");
                     ConsoleOut("SetNotificationURL (string)URL");
                     ConsoleOut("StopPrinting (int)Task number");
-                    ConsoleOut("StoreMessage (string)The message name  (string)The message to store", true, true);
+                    ConsoleOut("StoreMessage (string)The message name (string)The message to store", true, true);
                     Environment.Exit(0);
                 }
             });
@@ -118,15 +131,33 @@ public class Program
                     var response = await MakeOpcuaCall(channel, sp[0], variants.ToArray());
                     var serviceResult = response?.ResponseHeader?.ServiceResult;
 
+
+                    if (outfile != "")
+                        File.WriteAllText(outfile,"");
+                    
                     if (response?.Results != null && serviceResult.HasValue && StatusCode.IsGood(serviceResult.Value))
                         if (serviceResult.Value != StatusCodes.GoodPostActionFailed)
                             if (response.Results.Length > 0 && response.Results[0]!.OutputArguments!.Length > 0)
                                 if (response.Results[0]!.OutputArguments.Length > 1)
                                 {
-                                    var outputArgument = response.Results[0]!.OutputArguments[1];
-                                    var output = outputArgument.Value;
-                                    for (var i = 0; i < outputArgument.ArrayDimensions[0]; i++)
-                                        ConsoleOut(((string[]) output)[i]);
+                                    foreach (var outputArgument in response.Results[0]!.OutputArguments)
+                                    {
+                                        var output = outputArgument.Value;
+                                        if (outputArgument.ArrayDimensions != null)
+                                            for (var i = 0; i < outputArgument.ArrayDimensions[0]; i++)
+                                            {
+                                                ConsoleOut(((string[])output)[i]);
+                                                if (outfile != "")
+                                                    File.AppendAllLines(outfile, new[] {((string[])output)[i]});
+                                            }
+                                                
+                                        else
+                                        {
+                                            ConsoleOut(outputArgument.Value.ToString());
+                                            if (outfile != "")
+                                                File.AppendAllLines(outfile, new[] {outputArgument.Value.ToString()});
+                                        }
+                                    }  
                                 }
                 }
                 else
@@ -188,8 +219,11 @@ public class Program
             Console.WriteLine(ex.Message);
         }
 
-        ConsoleOut();
-        ConsoleOut("press enter to quit", false, true);
+        if (outfile == "")
+        {
+            ConsoleOut();
+            ConsoleOut("press enter to quit", false, true);
+        }
     }
 
     private static void ConsoleOut(string text = "", bool newLine = false, bool readLine = false)
@@ -249,5 +283,8 @@ public class Program
 
         [Option("opc", Required = false, HelpText = "OPC Command with arguments")]
         public string OPCCommand { get; set; }
+
+        [Option("out", Required = false, HelpText = "output file")]
+        public string Out { get; set; }
     }
 }
